@@ -1,4 +1,12 @@
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
 export default function Work() {
+  const root = useRef(null)
+
   const items = [
     {
       title: 'Fintech Growth Site',
@@ -17,8 +25,25 @@ export default function Work() {
     },
   ]
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.work-card', {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: root.current,
+          start: 'top 75%'
+        }
+      })
+    }, root)
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="work" className="py-24 sm:py-28 bg-gradient-to-b from-white to-slate-50">
+    <section ref={root} id="work" className="py-24 sm:py-28 bg-gradient-to-b from-white to-slate-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">Selected work</h2>
@@ -26,8 +51,8 @@ export default function Work() {
         </div>
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
           {items.map((p) => (
-            <figure key={p.title} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white">
-              <img src={p.img} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <figure key={p.title} className="work-card overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <img src={p.img} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-500 hover:scale-105" />
               <figcaption className="p-5">
                 <div className="text-sm text-slate-500">{p.tag}</div>
                 <div className="mt-1 font-semibold text-slate-900">{p.title}</div>

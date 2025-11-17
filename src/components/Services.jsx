@@ -1,4 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { Code2, Bot, Rocket, LineChart } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const services = [
   {
@@ -24,8 +29,27 @@ const services = [
 ]
 
 export default function Services() {
+  const root = useRef(null)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.service-card', {
+        opacity: 0,
+        y: 24,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: root.current,
+          start: 'top 70%'
+        }
+      })
+    }, root)
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="services" className="relative py-24 sm:py-28 bg-white">
+    <section ref={root} id="services" className="relative py-24 sm:py-28 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">What we do</h2>
@@ -34,7 +58,7 @@ export default function Services() {
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((s) => (
-            <div key={s.title} className="group rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-shadow bg-white">
+            <div key={s.title} className="service-card group rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-shadow bg-white">
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 via-fuchsia-500 to-amber-400 text-white grid place-items-center">
                 <s.icon size={22} />
               </div>
